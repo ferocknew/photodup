@@ -3,6 +3,9 @@
 {% block title %}Duplicates by {{ by | upper }}{% endblock %}
 
 {% block content_area %}
+    <h3>
+        <button id="DeleteAll" onclick="doit();" class="btn btn-primary">DeleteAll</button>
+    </h3>
     {% for k,v in data.items() %}
         <h3>{{ k | upper }}
             <small class="text-muted">count: {{ v | length }}</small>
@@ -24,6 +27,39 @@
             <button type="submit" class="btn btn-primary">Delete</button>
         </form>
     {% endfor %}
+    <h3>
+        <button id="DeleteAll" onclick="doit();" class="btn btn-primary">DeleteAll</button>
+    </h3>
     {% if not data %}<h2>Great, no duplicates!</h2>{% endif %}
 
+    <script>
+        function doit() {
+            let postDate = {};
+            $("input[type='checkbox']").each(function () {
+                if ($(this).is(':checked')) {
+                    let fileName = $(this).attr("name");
+                    console.info(fileName);
+                    postDate[fileName] = 'on';
+                }
+            });
+
+            console.info(postDate);
+
+            $.ajax({
+                url: "./",
+                type: "POST",
+                data: postDate,
+                dataType: "text",
+                success: function (data, textStatus, jqXHR) {
+                    window.location.reload(true);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error(
+                        "The following error occurred: " +
+                        textStatus, errorThrown
+                    );
+                }
+            });
+        }
+    </script>
 {% endblock %}
